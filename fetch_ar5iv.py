@@ -4,11 +4,13 @@ import json
 import argparse
 from collections import OrderedDict
 
+PATH_PARENT = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--start_index", type=int, default=0)
 parser.add_argument("--end_index", type=int, default=10)
 parser.add_argument(
-    "--path_storage", type=str, default=os.path.join("..", "ar5iv")
+    "--path_storage", type=str, default=os.path.join(PATH_PARENT, "ar5iv")
 )
 args = parser.parse_args()
 
@@ -31,9 +33,6 @@ if __name__ == "__main__":
                 f"{start_index + i} / {end_index} : {id}...", end="", flush=True
             )
             dir = os.path.join(args.path_storage, id)
-
-            if not os.path.exists(args.path_storage):
-                os.mkdir(args.path_storage)
 
             if not os.path.exists(dir):
                 os.mkdir(dir)
