@@ -3,10 +3,10 @@ pre-process [ArXivQA](https://github.com/taesiri/ArXivQA) using [ar5iv](https://
 
 Current workflow is : ar5iv --> HTML --> gfm
 
-Requires...
+## Requires...
 * docker for `pandoc`
 
-Default directory shape
+## Default directory shape
 ```
 * ArXivQA
 * ar5iv
@@ -22,7 +22,7 @@ python3 arxivqa_get_ids.py  # update `paper_ids.json`
 python3 fetch_ar5iv.py --start_index 0 --end_index 3  # update `ar5iv` and `paper_id_numchar.json`
 ```
 
-Output format
+## Output format
 ```
 * ar5iv
   * (arxiv-number)
