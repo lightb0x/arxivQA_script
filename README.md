@@ -1,5 +1,7 @@
 # arxivQA_script
-pre-process [ArXivQA](https://github.com/taesiri/ArXivQA) using [ar5iv](https://ar5iv.labs.arxiv.org/)
+pre-process [ArXivQA](https://github.com/taesiri/ArXivQA) using [ar5iv](https://ar5iv.labs.arxiv.org/) and [pandoc](https://pandoc.org/index.html)
+
+Current workflow is : ar5iv --> HTML --> gfm
 
 Requires...
 * docker for `pandoc`
