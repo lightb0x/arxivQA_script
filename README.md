@@ -3,6 +3,8 @@ pre-process [ArXivQA](https://github.com/taesiri/ArXivQA) using [ar5iv](https://
 
 Current workflow is : ar5iv --> HTML --> gfm
 
+You can download resulting tarball [here](https://mysnu-my.sharepoint.com/:f:/g/personal/lightb0x_seoul_ac_kr/ErTt9DH23FlMnxG93a0w-xMBLrBIuKCIf1y8h__P9s9c3Q?e=qQEFrm)
+
 ## Requires...
 * docker for `pandoc`
 
