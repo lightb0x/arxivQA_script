@@ -3,6 +3,7 @@ import subprocess
 import json
 import argparse
 from collections import OrderedDict
+from transformers import PreTrainedTokenizerFast
 
 PATH_PARENT = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
@@ -15,10 +16,16 @@ parser.add_argument(
 args = parser.parse_args()
 
 IN_FILENAME = "paper_ids.json"
+OUT_FILENAME = "paper_id_num_token.json"
 
 if __name__ == "__main__":
     start_index = args.start_index
     end_index = args.end_index
+
+    id_to_num_tok = {}
+    if os.path.exists(OUT_FILENAME):
+        with open(OUT_FILENAME, "r") as f:
+            id_to_num_tok = json.load(f)
 
     with open(IN_FILENAME, "r") as f:
         ids = json.load(f)
@@ -31,23 +38,34 @@ if __name__ == "__main__":
             if not os.path.exists(dir):
                 os.makedirs(dir)
 
-            filename = os.path.join(dir, f"{id}.html")
+            filename = os.path.join(dir, f"{id}.md")
 
             if not os.path.exists(filename):
                 # pandoc
-                # arxiv number --> URL --> HTML
+                # arxiv HTML --> markdown
                 subprocess.run(
                     f"""docker run --rm \
                         --volume "{dir}:/data" \
                         --volume "{dir}/assets:/assets" \
+                        --volume "{os.getcwd()}:/scripts" \
                         --user $(id -u):$(id -g) \
-                        pandoc/latex\
-                        -s -r html https://ar5iv.org/abs/{id}\
-                        --extract-media=assets\
-                        --mathml\
-                        -t html\
-                        -o {id}.html
+                        pandoc/panflute\
+                        -f html\
+                        {id}.html\
+                        -t gfm-raw_html\
+                        --wrap=none\
+                        --filter=/scripts/markdown_filter.py\
+                        -o {id}.md
                         """,
                     shell=True,
                 )
+            # number of tokens of resulting markdown
+            with open(filename, "r") as f:
+                converted = f.read()
+                tknzr = PreTrainedTokenizerFast(tokenizer_file="phi-1_5.json")
+                id_to_num_tok[id] = len(tknzr.tokenize(converted))
             print("done!")
+
+    ordered = OrderedDict(sorted(id_to_num_tok.items()))
+    with open(OUT_FILENAME, "w") as f:
+        json.dump(ordered, f, indent=4)
