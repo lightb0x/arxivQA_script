@@ -6,6 +6,7 @@ import argparse
 PATH_PARENT = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--start_index", type=int, default=0)
 parser.add_argument("--end_index", type=int, default=10)
 parser.add_argument(
@@ -21,6 +22,7 @@ if __name__ == "__main__":
 
     with open(IN_FILENAME, "r") as f:
         ids = json.load(f)
+        end_index = min(end_index, len(ids))
         for i, id in enumerate(ids[start_index:end_index]):
             print(
                 f"{start_index + i} / {end_index} : {id}...", end="", flush=True
@@ -32,7 +34,7 @@ if __name__ == "__main__":
 
             filename = os.path.join(dir, f"{id}.html")
 
-            if not os.path.exists(filename):
+            if args.overwrite or not os.path.exists(filename):
                 # pandoc
                 # arxiv number --> URL --> HTML
                 subprocess.run(

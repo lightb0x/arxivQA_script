@@ -9,6 +9,7 @@ from utils.locker import Locker
 PATH_PARENT = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--start_index", type=int, default=0)
 parser.add_argument("--end_index", type=int, default=10)
 parser.add_argument(
@@ -40,7 +41,7 @@ if __name__ == "__main__":
 
             filename = os.path.join(dir, f"{id}.md")
 
-            if not os.path.exists(filename):
+            if args.overwrite or not os.path.exists(filename):
                 # pandoc
                 # arxiv HTML --> markdown
                 command = [
