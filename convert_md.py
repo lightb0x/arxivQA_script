@@ -28,6 +28,7 @@ if __name__ == "__main__":
     tokenizer = PreTrainedTokenizerFast(tokenizer_file="phi-1_5.json")
     with open(IN_FILENAME, "r") as f:
         ids = json.load(f)
+        end_index = min(end_index, len(ids))
         for i, id in enumerate(ids[start_index:end_index]):
             print(
                 f"{start_index + i} / {end_index} : {id}...", end="", flush=True
