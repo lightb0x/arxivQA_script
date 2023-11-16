@@ -1,3 +1,4 @@
+# https://stackoverflow.com/a/60214222
 import os
 from pathlib import Path
 
