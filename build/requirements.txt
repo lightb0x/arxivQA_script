@@ -1,1 +1,1 @@
-panflute
+panflute==2.3.0
