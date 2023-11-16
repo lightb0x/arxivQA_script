@@ -21,7 +21,9 @@ You can download resulting tarball [here](https://mysnu-my.sharepoint.com/:f:/g/
 ## how to use
 ```bash
 python3 arxivqa_get_ids.py  # update `paper_ids.json`
-python3 fetch_ar5iv.py --start_index 0 --end_index 3  # update `ar5iv` and `paper_id_num_token.json`
+python3 convert.py --start_index 0 --end_index 3 --url_to_html
+python3 convert.py --start_index 0 --end_index 3 --html_to_md
+python3 data_clean.py  # e.g., deduplication
 ```
 
 ## Output format
