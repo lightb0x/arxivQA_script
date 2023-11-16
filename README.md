@@ -13,37 +13,39 @@ removed link, image, table, reference, appendix and redundant tail
 * 11,425,548 tokens for Q&A
 * 55,971,499 tokens total (clean papers + Q&A)
 
-## Requires...
+## build on your own
+requires...
 * docker for `pandoc`
 
-## Default directory shape
+### Default directory shape
 ```
 * ArXivQA
 * ar5iv
 * arxivQA_script
-  * arxivqa_get_ids.py
-  * fetch_ar5iv.py
+  * convert.py
+  * data_clean.py
   * ...
 ```
 
-## how to use
+### how to run
 ```bash
 # execute in order
 python3 arxivqa_get_ids.py  # update `paper_ids.json`
 python3 convert.py --start_index 0 --end_index 3 --url_to_html
 python3 convert.py --start_index 0 --end_index 3 --html_to_md
 python3 data_clean.py  # e.g., deduplication
-python3 merge_qa.py
+python3 merge_qa.py  # add Q&A from ArXivQA, only for clean dataset
 ```
 
 ## Output format
 ```
 * ar5iv
   * (yymm)
-    * (arxiv id)
+    * (id)
       * assets
-      * (arxiv-number).html
-      * (arxiv-number).md
+      * (yymm.id).html  # original
+      * (yymm.id).md    # converted markdown
+      * (yymm.id).json  # Q&A converted from ArXivQA (only for clean dataset)
     * ...
   * ...
 ```
