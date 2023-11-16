@@ -40,7 +40,7 @@ if __name__ == "__main__":
             total_num_tok += num_tok
 
     print(f"skipped {skipped} out of {len(num_tokens)} papers")
-    print(f"total {total_num_tok} tokens")
+    print(f"total {total_num_tok} clean tokens")
 
     print("saving...")
     with open(CLEAN, "w") as f:
