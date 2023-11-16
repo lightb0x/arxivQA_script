@@ -3,7 +3,15 @@ pre-process [ArXivQA](https://github.com/taesiri/ArXivQA) using [ar5iv](https://
 
 Current workflow is : ar5iv --> HTML --> gfm
 
-You can download resulting tarball [here](https://mysnu-my.sharepoint.com/:f:/g/personal/lightb0x_seoul_ac_kr/ErTt9DH23FlMnxG93a0w-xMBLrBIuKCIf1y8h__P9s9c3Q?e=qQEFrm)
+You can download resulting tarball [here](https://1drv.ms/u/s!AuG8P2rNajS4guE8Fq1yXJNI0wXyTA?e=2jX9gQ) (PW : `BLMPqh6mfLkekAQ3ufVDGj7M`)
+
+## dataset card
+### v3
+removed link, image, table, reference, appendix and redundant tail
+* 4,602 papers
+* 44,545,951 tokens for clean papers
+* 11,425,548 tokens for Q&A
+* 55,971,499 tokens total (clean papers + Q&A)
 
 ## Requires...
 * docker for `pandoc`
