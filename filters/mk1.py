@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# removes the following:
+# * link
+# * image
+# * reference
+# * ar5iv tail
 from panflute import (
     run_filter,
     Str,
