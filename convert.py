@@ -96,6 +96,8 @@ if __name__ == "__main__":
                     with open(dir_md, "r") as f:
                         converted = f.read()
                         id_to_num_tok[id] = len(tokenizer.tokenize(converted))
+                else:
+                    id_to_num_tok[id] = 0
             print("done!")
 
     with Locker():
