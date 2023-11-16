@@ -51,7 +51,8 @@ if __name__ == "__main__":
     tokenizer = PreTrainedTokenizerFast(tokenizer_file="phi-1_5.json")
     total_num_tok = 0
     total_num_qa_tok = 0
-    for id, actual in clean_link:
+    for id, actual in clean_link.items():
+        print(id)
         ym, num = actual.split(".")
         paper_path = os.path.join(DATA_DIR, ym, num)
 
@@ -65,4 +66,4 @@ if __name__ == "__main__":
 
     print(f"total {len(clean_link)} papers")
     print(f"total {total_num_qa_tok} tokens for Q&A")
-    print(f"total {total_num_tok} tokens for paper + Q&A")
+    print(f"total {total_num_tok + total_num_qa_tok} tokens for paper + Q&A")

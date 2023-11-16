@@ -13,7 +13,8 @@ CLEAN = "clean_dset.json"  # dedup id --> actual id
 DIRTY = "dirty_dset.json"  # actual id --> reason
 
 if __name__ == "__main__":
-    skipped = 0
+    skip_conversion = 0
+    skip_duplicate = 0
     total_num_tok = 0
     clean = {}
     dirty = {}
@@ -22,27 +23,31 @@ if __name__ == "__main__":
     with open(IN_FILENAME, "r") as f:
         num_tokens = json.load(f)
 
-    for id, num_tok in num_tokens:
+    for id, num_tok in num_tokens.items():
         ym, num = id.split(".")
         num = num.split("v")[0]
         dedup_id = ".".join([ym, num])
 
         if num_tok < 256:
             # skip ar5iv failure
-            skipped += 1
+            skip_conversion += 1
             dirty[id] = "ar5iv/pandoc"
         elif dedup_id in clean:
             # skip duplicates
-            skipped += 1
+            skip_duplicate += 1
             dirty[id] = "duplicate"
         else:
             clean[dedup_id] = id  # actual link
             total_num_tok += num_tok
 
-    print(f"skipped {skipped} out of {len(num_tokens)} papers")
+    print(f"skipped {skip_conversion} papers for conversion")
+    print(f"skipped {skip_duplicate} papers for duplicate")
+    print(f"out of {len(num_tokens)} papers")
+    print(
+        f"(skip {(skip_conversion + skip_duplicate) / len(num_tokens) * 100} %)"
+    )
     print(f"total {total_num_tok} clean tokens")
 
-    print("saving...")
     with open(CLEAN, "w") as f:
         json.dump(clean, f, indent=4)
     with open(DIRTY, "w") as f:
