@@ -56,7 +56,7 @@ def empty_like(elem):
 def trim_elements(elem, doc):
     global REF, TAIL
 
-    if type(elem) in [Link, Image, Str] and TAIL:
+    if isinstance(elem, (Inline)) and TAIL:
         return empty_like(elem)
     elif type(elem) in [Link, Image]:
         if "\u25c4" == flatten(elem):
