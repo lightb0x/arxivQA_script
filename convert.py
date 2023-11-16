@@ -38,7 +38,9 @@ if __name__ == "__main__":
         end_index = min(end_index, len(ids))
         for i, id in enumerate(ids[start_index:end_index]):
             print(
-                f"{start_index + i} / {end_index} : {id}...", end="", flush=True
+                f"{start_index + i + 1} / {end_index} : {id}...",
+                end="",
+                flush=True,
             )
             dir = os.path.join(args.path_storage, *id.split("."))
 
