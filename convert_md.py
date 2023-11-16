@@ -4,6 +4,7 @@ import json
 import argparse
 from collections import OrderedDict
 from transformers import PreTrainedTokenizerFast
+from utils.locker import Locker
 
 PATH_PARENT = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
@@ -23,10 +24,8 @@ if __name__ == "__main__":
     end_index = args.end_index
 
     id_to_num_tok = {}
-    if os.path.exists(OUT_FILENAME):
-        with open(OUT_FILENAME, "r") as f:
-            id_to_num_tok = json.load(f)
 
+    tokenizer = PreTrainedTokenizerFast(tokenizer_file="phi-1_5.json")
     with open(IN_FILENAME, "r") as f:
         ids = json.load(f)
         for i, id in enumerate(ids[start_index:end_index]):
@@ -43,29 +42,43 @@ if __name__ == "__main__":
             if not os.path.exists(filename):
                 # pandoc
                 # arxiv HTML --> markdown
+                command = [
+                    "docker run --rm",
+                    f'--volume "{dir}:/data"',
+                    f'--volume "{os.path.join(dir, "assets")}:/assets"',
+                    f'--volume "{os.path.join(os.getcwd(), "filters")}:/filters"',
+                    "--user $(id -u):$(id -g)",
+                    "pandoc/panflute",
+                    "-f html",
+                    f"{id}.html",
+                    "-t gfm-raw_html",
+                    "--wrap=none",
+                    "--filter=/filters/mk2.py",
+                    f"-o {id}.md",
+                ]
                 subprocess.run(
-                    f"""docker run --rm \
-                        --volume "{dir}:/data" \
-                        --volume "{dir}/assets:/assets" \
-                        --volume "{os.getcwd()}:/scripts" \
-                        --user $(id -u):$(id -g) \
-                        pandoc/panflute\
-                        -f html\
-                        {id}.html\
-                        -t gfm-raw_html\
-                        --wrap=none\
-                        --filter=/scripts/markdown_filter.py\
-                        -o {id}.md
-                        """,
+                    " ".join(command),
                     shell=True,
                 )
             # number of tokens of resulting markdown
-            with open(filename, "r") as f:
-                converted = f.read()
-                tknzr = PreTrainedTokenizerFast(tokenizer_file="phi-1_5.json")
-                id_to_num_tok[id] = len(tknzr.tokenize(converted))
+            if os.path.exists(filename):
+                with open(filename, "r") as f:
+                    converted = f.read()
+                    id_to_num_tok[id] = len(tokenizer.tokenize(converted))
             print("done!")
 
-    ordered = OrderedDict(sorted(id_to_num_tok.items()))
-    with open(OUT_FILENAME, "w") as f:
-        json.dump(ordered, f, indent=4)
+    with Locker():
+        loaded = {}
+        if os.path.exists(OUT_FILENAME):
+            with open(OUT_FILENAME, "r") as f:
+                loaded = json.load(f)
+
+        def merge_two_dicts(orig, update):
+            merged = orig.copy()
+            merged.update(update)
+            return merged
+
+        id_to_num_tok = merge_two_dicts(loaded, id_to_num_tok)
+        ordered = OrderedDict(sorted(id_to_num_tok.items()))
+        with open(OUT_FILENAME, "w") as f:
+            json.dump(ordered, f, indent=4)
