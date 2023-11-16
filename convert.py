@@ -15,7 +15,13 @@ parser.add_argument("--end_index", type=int, default=10)
 parser.add_argument(
     "--path_storage", type=str, default=os.path.join(PATH_PARENT, "ar5iv")
 )
+parser.add_argument("--url_to_html", action="store_true")
+parser.add_argument("--html_to_md", action="store_true")
 args = parser.parse_args()
+
+assert (
+    args.url_to_html or args.html_to_md
+), "both `--url_to_html` and `--html_to_md` conversions not set, aborting..."
 
 IN_FILENAME = "paper_ids.json"
 OUT_FILENAME = "paper_id_num_token.json"
@@ -39,9 +45,34 @@ if __name__ == "__main__":
             if not os.path.exists(dir):
                 os.makedirs(dir)
 
-            filename = os.path.join(dir, f"{id}.md")
+            filename_html = os.path.join(f"{id}.html")
+            filename_md = os.path.join(f"{id}.md")
 
-            if args.overwrite or not os.path.exists(filename):
+            dir_html = os.path.join(dir, filename_html)
+            dir_md = os.path.join(dir, filename_md)
+
+            if args.url_to_html and (
+                args.overwrite or not os.path.exists(dir_html)
+            ):
+                # pandoc
+                # arxiv number --> URL --> HTML
+                command = [
+                    "docker run --rm",
+                    f'--volume "{dir}:/data"',
+                    f'--volume "{os.path.join(dir, "assets")}:/assets"',
+                    "--user $(id -u):$(id -g)",
+                    "pandoc/latex",
+                    f"-s -r html https://ar5iv.org/abs/{id}",
+                    "--extract-media=assets",
+                    "--mathml",
+                    "-t html",
+                    f"-o {filename_html}",
+                ]
+                subprocess.run(" ".join(command), shell=True)
+
+            if args.html_to_md and (
+                args.overwrite or not os.path.exists(dir_md)
+            ):
                 # pandoc
                 # arxiv HTML --> markdown
                 command = [
@@ -52,21 +83,19 @@ if __name__ == "__main__":
                     "--user $(id -u):$(id -g)",
                     "pandoc/panflute",
                     "-f html",
-                    f"{id}.html",
+                    f"{filename_html}",
                     "-t gfm-raw_html",
                     "--wrap=none",
                     "--filter=/filters/mk2.py",
-                    f"-o {id}.md",
+                    f"-o {filename_md}",
                 ]
-                subprocess.run(
-                    " ".join(command),
-                    shell=True,
-                )
-            # number of tokens of resulting markdown
-            if os.path.exists(filename):
-                with open(filename, "r") as f:
-                    converted = f.read()
-                    id_to_num_tok[id] = len(tokenizer.tokenize(converted))
+                subprocess.run(" ".join(command), shell=True)
+
+                # number of tokens of resulting markdown
+                if os.path.exists(dir_md):
+                    with open(dir_md, "r") as f:
+                        converted = f.read()
+                        id_to_num_tok[id] = len(tokenizer.tokenize(converted))
             print("done!")
 
     with Locker():
