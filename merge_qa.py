@@ -40,17 +40,26 @@ def parse_qa(filename, tokenizer):
     return paper, num_qa_tok
 
 
+def parse_paper(filename, tokenizer):
+    paper = {}
+    num_article_tok = 0
+
+    with open(filename, "r") as f:
+        article = f.read()
+        paper["article"] = article
+        num_article_tok += len(tokenizer.tokenize(article))
+
+    return paper, num_article_tok
+
+
 if __name__ == "__main__":
-    num_tokens = {}
-    with open(NUM_TOKENS, "r") as f:
-        num_tokens = json.load(f)
     clean_link = {}
     with open(CLEAN, "r") as f:
         clean_link = json.load(f)
 
     tokenizer = PreTrainedTokenizerFast(tokenizer_file="phi-1_5.json")
-    total_num_tok = 0
     total_num_qa_tok = 0
+    total_article_num_tok = 0
     for id, actual in clean_link.items():
         print(id)
         ym, num = actual.split(".")
@@ -58,12 +67,20 @@ if __name__ == "__main__":
 
         qa_file = os.path.join(QA_DIR, f"{actual}.md")
         paper_qas, qa_num_tok = parse_qa(qa_file, tokenizer)
+
+        article_file = os.path.join(DATA_DIR, ym, num, f"{actual}.md")
+        article, article_num_tok = parse_paper(article_file, tokenizer)
+
         total_num_qa_tok += qa_num_tok
+        total_article_num_tok += article_num_tok
+
+        paper_qas.update(article)
 
         with open(os.path.join(paper_path, f"{actual}.json"), "w") as f_qa:
             json.dump(paper_qas, f_qa, indent=4)
-        total_num_tok += num_tokens[actual]
 
     print(f"total {len(clean_link)} papers")
     print(f"total {total_num_qa_tok} tokens for Q&A")
-    print(f"total {total_num_tok + total_num_qa_tok} tokens for paper + Q&A")
+    print(
+        f"total {total_article_num_tok + total_num_qa_tok} tokens for paper + Q&A"
+    )

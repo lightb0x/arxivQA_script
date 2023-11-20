@@ -3,9 +3,12 @@ pre-process [ArXivQA](https://github.com/taesiri/ArXivQA) using [ar5iv](https://
 
 Current workflow is : ar5iv --> HTML --> gfm
 
-You can download resulting tarball [here](https://1drv.ms/u/s!AuG8P2rNajS4guE8Fq1yXJNI0wXyTA?e=2jX9gQ) (PW : `BLMPqh6mfLkekAQ3ufVDGj7M`)
+You can download resulting tarball [here](https://1drv.ms/f/s!AuG8P2rNajS4uWSlSNtoIZNyHG4E?e=b9Ua10) (PW : `BLMPqh6mfLkekAQ3ufVDGj7M`)
 
 ## dataset card
+### v4
+merged article + Q&A to `json` (was only Q&A)
+
 ### v3
 removed link, image, table, reference, appendix and redundant tail
 * 4,602 papers
