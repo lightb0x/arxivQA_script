@@ -38,6 +38,7 @@ python3 convert.py --start_index 0 --end_index 3 --url_to_html
 python3 convert.py --start_index 0 --end_index 3 --html_to_md
 python3 data_clean.py  # e.g., deduplication
 python3 merge_qa.py  # add Q&A from ArXivQA, only for clean dataset
+python3 aggregate.py  # aggregate to one large `json` file
 ```
 
 ## Output format
