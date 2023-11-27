@@ -5,6 +5,10 @@ Current workflow is : ar5iv --> HTML --> gfm
 
 You can download resulting tarball [here](https://1drv.ms/f/s!AuG8P2rNajS4uWSlSNtoIZNyHG4E?e=b9Ua10) (PW : `BLMPqh6mfLkekAQ3ufVDGj7M`)
 
+md5 hash values
+* `ar5iv_v4_textonly.tar.gz` : `5f01788d7e9e4d33b29279fa00574dac`
+* `arxivQA_v4.json` : `e267227c3891eddea4c670f4fbf2102d`
+
 ## dataset card
 ### v4
 merged article + Q&A to `json` (was only Q&A)
