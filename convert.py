@@ -17,11 +17,12 @@ parser.add_argument(
 )
 parser.add_argument("--url_to_html", action="store_true")
 parser.add_argument("--html_to_md", action="store_true")
+parser.add_argument("--html_to_latex", action="store_true")
 args = parser.parse_args()
 
 assert (
-    args.url_to_html or args.html_to_md
-), "both `--url_to_html` and `--html_to_md` conversions not set, aborting..."
+    args.url_to_html or args.html_to_md or args.html_to_latex
+), "no conversion set, aborting..."
 
 IN_FILENAME = "paper_ids.json"
 OUT_FILENAME = "paper_id_num_token.json"
@@ -49,6 +50,7 @@ if __name__ == "__main__":
 
             filename_html = os.path.join(f"{id}.html")
             filename_md = os.path.join(f"{id}.md")
+            filename_tex = os.path.join(f"{id}.tex")
 
             dir_html = os.path.join(dir, filename_html)
             dir_md = os.path.join(dir, filename_md)
@@ -72,11 +74,11 @@ if __name__ == "__main__":
                 ]
                 subprocess.run(" ".join(command), shell=True)
 
-            if args.html_to_md and (
+            if (args.html_to_md or args.html_to_latex) and (
                 args.overwrite or not os.path.exists(dir_md)
             ):
                 # pandoc
-                # arxiv HTML --> markdown
+                # arxiv HTML --> [markdown|latex]
                 command = [
                     "docker run --rm",
                     f'--volume "{dir}:/data"',
@@ -86,10 +88,13 @@ if __name__ == "__main__":
                     "pandoc/panflute",
                     "-f html",
                     f"{filename_html}",
-                    "-t gfm-raw_html",
+                    "-t gfm-raw_html" if args.html_to_md else "-t latex",
                     "--wrap=none",
                     "--filter=/filters/mk2.py",
-                    f"-o {filename_md}",
+                    "-s",
+                    f"-o {filename_md}"
+                    if args.html_to_md
+                    else f"-o {filename_tex}",
                 ]
                 subprocess.run(" ".join(command), shell=True)
 

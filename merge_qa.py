@@ -2,6 +2,7 @@ import os
 import json
 import re
 from transformers import PreTrainedTokenizerFast
+import argparse
 
 PATH_PARENT = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 DATA_DIR = os.path.join(PATH_PARENT, "ar5iv")
@@ -9,6 +10,12 @@ QA_DIR = os.path.join(PATH_PARENT, "ArXivQA", "papers")
 
 CLEAN = "clean_dset.json"  # dedup id --> actual id
 NUM_TOKENS = "paper_id_num_token.json"  # actual id --> num tokens
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--latex", action="store_true", help="input is latex (default is markdown)"
+)
+args = parser.parse_args()
 
 
 # QA markdown to json
@@ -53,6 +60,7 @@ def parse_paper(filename, tokenizer):
 
 
 if __name__ == "__main__":
+    ext = "tex" if args.latex else "md"
     clean_link = {}
     with open(CLEAN, "r") as f:
         clean_link = json.load(f)
@@ -68,7 +76,7 @@ if __name__ == "__main__":
         qa_file = os.path.join(QA_DIR, f"{actual}.md")
         paper_qas, qa_num_tok = parse_qa(qa_file, tokenizer)
 
-        article_file = os.path.join(DATA_DIR, ym, num, f"{actual}.md")
+        article_file = os.path.join(DATA_DIR, ym, num, f"{actual}.{ext}")
         article, article_num_tok = parse_paper(article_file, tokenizer)
 
         total_num_qa_tok += qa_num_tok
@@ -76,7 +84,13 @@ if __name__ == "__main__":
 
         paper_qas.update(article)
 
-        with open(os.path.join(paper_path, f"{actual}.json"), "w") as f_qa:
+        with open(
+            os.path.join(
+                paper_path,
+                f"{actual}_tex.json" if args.latex else f"{actual}.json",
+            ),
+            "w",
+        ) as f_qa:
             json.dump(paper_qas, f_qa, indent=4)
 
     print(f"total {len(clean_link)} papers")
