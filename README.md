@@ -8,6 +8,7 @@ You can download resulting tarball [here](https://1drv.ms/f/s!AuG8P2rNajS4uWSlSN
 md5 hash values
 * `ar5iv_v4_textonly.tar.gz` : `5f01788d7e9e4d33b29279fa00574dac`
 * `arxivQA_v4.json` : `e267227c3891eddea4c670f4fbf2102d`
+* `arxivQA_v4_tex.json` : `1d5ff485b9603bc32d5b5f36a0a0bb3d`
 
 ## dataset card
 ### v4
